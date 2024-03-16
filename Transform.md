@@ -10,8 +10,7 @@ This page contains all files you will need in order to set up the data transform
 In addition to the notebook-files containing the data transformation, I have also added some screen shots of how I have created the different pipelines to run the notebooks and essentially the transformation of data between the different layers. 
 
 ## Notebook files: 
-⬇️ Download Slide Deck
-{{< button "Download" "/Bronze_to_Silver.ipynb" >}}
+
 
 
 ## Pipelin configuration: 
