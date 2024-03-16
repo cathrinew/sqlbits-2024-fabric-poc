@@ -15,7 +15,7 @@ In addition to the notebook-files containing the data transformation, I have als
 
 ## Pipelin configuration: 
 
-# Pipeline for transforming data for Common tables:
+### Pipeline for transforming data for Common tables:
 
 <img src="images/Common_tables.png" width="200" alt="Pipeline for transforming data for Common tables." style="border: 1px solid #ccc;" />
 
@@ -27,6 +27,6 @@ In addition to the notebook-files containing the data transformation, I have als
 
 <img src="images/Silver_to_Gold.png" width="200" alt="Pipeline for transforming data from Silver to Gold." style="border: 1px solid #ccc;" />
 
-# Pipeline for Orchestrating the data ingestion and transformation through all layers: 
+### Pipeline for Orchestrating the data ingestion and transformation through all layers: 
 
 <img src="images/Orkestrering.png" width="200" alt="Pipeline for Orchestrating the data ingestion and transformation through all layers." style="border: 1px solid #ccc;" />
