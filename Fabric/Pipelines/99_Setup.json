@@ -1,0 +1,118 @@
+{
+    "name": "99_Setup",
+    "objectId": "87eeb804-a96b-4c12-bfc4-a2a99d719126",
+    "properties": {
+        "description": "Create schemas and load/prepare metadata that is used in Bronze, Silver and/or Gold lakehouses.",
+        "activities": [
+            {
+                "name": "Load Date Tables",
+                "description": "📅 Load Date table to Bronze, Silver and Gold 🥉🥈🥇",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Schemas Gold",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "fc03ea5e-6f46-41e8-8ccc-4e93de2160d2",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            },
+            {
+                "name": "Load Metadata InsideAirbnb",
+                "type": "RefreshDataflow",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "dataflowId": "df9dd702-94c2-4628-9dd4-ccf935452e29",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a",
+                    "notifyOption": "NoNotification"
+                }
+            },
+            {
+                "name": "Schemas Bronze",
+                "description": "⚙️ Create or alter existing Bronze tables 🥉",
+                "type": "TridentNotebook",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "c1e587e2-336b-494a-9641-b09cd7779514",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            },
+            {
+                "name": "Schemas Silver",
+                "description": "⚙️ Create or alter existing Silver tables 🥈",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Schemas Bronze",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "bc4a917a-cc80-48df-9e92-e7d402c07dad",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            },
+            {
+                "name": "Schemas Gold",
+                "description": "⚙️ Create or alter existing Gold tables 🥇",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Schemas Silver",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "6fd046e0-e94b-417c-9b64-410a0d5d7d03",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            }
+        ],
+        "annotations": [],
+        "lastModifiedByObjectId": "f6b3fe48-d23d-4612-adff-5d62f6281d47",
+        "lastPublishTime": "2024-03-17T13:36:50Z"
+    }
+}

@@ -1,0 +1,146 @@
+{
+	"name": "00_Orchestration",
+	"objectId": "3a9cec8b-6f6e-4c46-adfd-f01a2fd713fc",
+	"properties": {
+		"description": "Main orchestration pipeline that runs on a schedule.",
+		"activities": [
+			{
+				"name": "Silver",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Bronze",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "a39cf89f-98cb-40bc-baf0-0ff5abb7297e",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Gold",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Silver",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "df412785-743d-409a-a574-df4f2bb735d4",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Bronze",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "724a320f-2ea3-4db0-84e3-0482e015f00b",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Bronze Failed",
+				"type": "Office365Outlook",
+				"dependsOn": [
+					{
+						"activity": "Bronze",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"typeProperties": {
+					"inputs": {
+						"method": "post",
+						"path": "/v2/Mail",
+						"body": {
+							"To": "cathrine@fabricfebruary.com",
+							"Subject": "Oh no! Bronze failed 😟",
+							"Body": "<h1>Bronze failed 🥉😟</h1>\n<p><strong>Pipeline:</strong> @{pipeline().PipelineName}<br>\n<strong>Workspace ID:</strong> @{pipeline().DataFactory}<br>\n<strong>Pipeline Trigger Type:</strong> @{pipeline().TriggerType}<br>\n<strong>Pipeline Run ID:</strong> @{pipeline().RunId}</p>\n<h2>Error message:</h2>\n<p>@{activity('Bronze').output.message}</p>",
+							"Sensitivity": "",
+							"Importance": "Normal"
+						}
+					}
+				}
+			},
+			{
+				"name": "Silver Failed",
+				"type": "Office365Outlook",
+				"dependsOn": [
+					{
+						"activity": "Silver",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"typeProperties": {
+					"inputs": {
+						"method": "post",
+						"path": "/v2/Mail",
+						"body": {
+							"To": "cathrine@fabricfebruary.com",
+							"Subject": "Oh no! Silver failed 😲",
+							"Body": "<h1>Silver failed 🥈😲</h1>\n<p><strong>Pipeline:</strong> @{pipeline().PipelineName}<br>\n<strong>Workspace ID:</strong> @{pipeline().DataFactory}<br>\n<strong>Pipeline Trigger Type:</strong> @{pipeline().TriggerType}<br>\n<strong>Pipeline Run ID:</strong> @{pipeline().RunId}</p>\n<h2>Error message:</h2>\n<p>@{activity('Silver').output.message}</p>",
+							"Sensitivity": "",
+							"Importance": "Normal"
+						}
+					}
+				}
+			},
+			{
+				"name": "Gold Failed",
+				"type": "Office365Outlook",
+				"dependsOn": [
+					{
+						"activity": "Gold",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"typeProperties": {
+					"inputs": {
+						"method": "post",
+						"path": "/v2/Mail",
+						"body": {
+							"To": "cathrine@fabricfebruary.com",
+							"Subject": "Oh no! Gold failed 😱",
+							"Body": "<h1>Gold failed 🥇😱</h1>\n<p><strong>Pipeline:</strong> @{pipeline().PipelineName}<br>\n<strong>Workspace ID:</strong> @{pipeline().DataFactory}<br>\n<strong>Pipeline Trigger Type:</strong> @{pipeline().TriggerType}<br>\n<strong>Pipeline Run ID:</strong> @{pipeline().RunId}</p>\n<h2>Error message:</h2>\n<p>@{activity('Gold').output.message}</p>",
+							"Sensitivity": "",
+							"Importance": "Normal"
+						}
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastModifiedByObjectId": "f6b3fe48-d23d-4612-adff-5d62f6281d47",
+		"lastPublishTime": "2024-03-17T20:28:18Z"
+	}
+}

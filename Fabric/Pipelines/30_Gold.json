@@ -1,0 +1,143 @@
+{
+    "name": "30_Gold",
+    "objectId": "df412785-743d-409a-a574-df4f2bb735d4",
+    "properties": {
+        "description": "Remodel data from Silver lakehouse to Dimensions and Facts in Gold lakehouse.",
+        "activities": [
+            {
+                "name": "DimHost",
+                "type": "TridentNotebook",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "f8b7884c-07c2-41ea-a46f-8e7a01f64cbd",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            },
+            {
+                "name": "DimListing",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "DimHost",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "b2690965-955e-475e-8023-4c83c3460f30",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            },
+            {
+                "name": "DimNeighbourhood",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "DimListing",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "75700d87-d67d-42ab-b386-1af756e12aa0",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            },
+            {
+                "name": "DimPropertyType",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "DimNeighbourhood",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "6fe10a3c-cb7b-43b4-9296-7184a81b88f6",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            },
+            {
+                "name": "DimRoomType",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "DimPropertyType",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "2cb4887a-0884-4c61-b782-599cdcb050d5",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            },
+            {
+                "name": "FactListings",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "DimRoomType",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "c65f6cdf-4da6-4c52-b084-ec91e3ed0d94",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            }
+        ],
+        "annotations": [],
+        "lastModifiedByObjectId": "52717e6b-8578-4816-9aaf-55eeb2b7a77b",
+        "lastPublishTime": "2024-03-17T11:45:46Z"
+    }
+}

@@ -1,7 +1,5 @@
 # Build a Microsoft Fabric Proof of Concept in a Day
 
-https://sqlbits.com/attend/the-agenda/full-day-training/Ready_for_take-off_Build_a_Microsoft_Fabric_Proof_of_Concept_in_a_Day
-
 
 
 ## Welcome!
@@ -12,7 +10,11 @@ Thank you so much for attending our **Build a Microsoft Fabric Proof of Concept 
 
 ## Slide Deck
 
-Download the Slide Deck. _(Insert link.)_
+<div style="font-size: 2rem">
+
+👉 [Download the Slide Deck](<Slides/SQLBits - Fabric PoC - Marthe Emilie Cathrine.pptx>) 👈
+
+</div>
 
 
 
@@ -38,20 +40,34 @@ Remember to put on your own Fabric mask before helping your clients or organizat
 
 ## About the Flight Attendants
 
+### Emilie Rønning
+
+<img src="Speakers/Emilie.jpg" width="200" alt="Emilie Rønning smiling." style="border: 1px solid #ccc;" />
+
+**Senior Data Engineer, Quarks**
+
+- [E-mail Emilie](mailto:emilie@fabricfebruary.com)
+- [Connect with Emilie on LinkedIn](https://www.linkedin.com//in/emilie-ronning)
+- [Follow Emilie on X/Twitter](https://twitter.com/emilieronning)
+
 ### Cathrine Wilhelmsen
 
-<img src="images/Cathrine.jpg" width="200" alt="Cathrine Wilhelmsen smiling." style="border: 1px solid #ccc;" />
+<img src="Speakers/Cathrine.jpg" width="200" alt="Cathrine Wilhelmsen smiling." style="border: 1px solid #ccc;" />
 
-_(About Cathrine. Links.)_
+**Lead Consultant, Evidi**
+
+- [E-mail Cathrine](mailto:cathrine@fabricfebruary.com)
+- [Connect with Cathrine on LinkedIn](https://www.linkedin.com/in/cathrinewilhelmsen)
+- [Follow Cathrine on X/Twitter](https://twitter.com/cathrinew)
+
 
 ### Marthe Moengen
 
-<img src="images/Marthe.jpg" width="200" alt="Marthe Moengen smiling." style="border: 1px solid #ccc;" />
+**Managing Data Consultant, Sopra Steria**
 
-_(About Marthe. Links.)_
+<img src="Speakers/Marthe.jpg" width="200" alt="Marthe Moengen smiling." style="border: 1px solid #ccc;" />
 
-### Emilie Rønning
+- [E-mail Marthe](mailto:marthe@fabricfebruary.com)
+- [Connect with Marthe on LinkedIn](https://www.linkedin.com//in/marthemoengen)
+- [Follow Marthe on X/Twitter](https://twitter.com/mmoengen)
 
-<img src="images/Emilie.jpg" width="200" alt="Emilie Rønning smiling." style="border: 1px solid #ccc;" />
-
-_(About Emilie. Links.)_

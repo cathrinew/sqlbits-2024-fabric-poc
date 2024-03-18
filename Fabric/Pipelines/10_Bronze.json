@@ -1,0 +1,26 @@
+{
+    "name": "10_Bronze",
+    "objectId": "724a320f-2ea3-4db0-84e3-0482e015f00b",
+    "properties": {
+        "activities": [
+            {
+                "name": "InsideAirbnb",
+                "type": "ExecutePipeline",
+                "dependsOn": [],
+                "policy": {
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "54492df2-ab38-4cbf-9e6a-8cd435ea0fe0",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true
+                }
+            }
+        ],
+        "annotations": [],
+        "lastModifiedByObjectId": "f6b3fe48-d23d-4612-adff-5d62f6281d47",
+        "lastPublishTime": "2024-03-17T12:30:15Z"
+    }
+}

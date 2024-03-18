@@ -1,0 +1,521 @@
+{
+    "name": "10_Bronze_InsideAirbnb",
+    "objectId": "54492df2-ab38-4cbf-9e6a-8cd435ea0fe0",
+    "properties": {
+        "description": "Ingest data from Inside Airbnb (http://insideairbnb.com/get-the-data/) to Bronze lakehouse.",
+        "activities": [
+            {
+                "name": "Lookup Metadata",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "source": {
+                        "type": "LakehouseTableSource"
+                    },
+                    "firstRowOnly": false,
+                    "datasetSettings": {
+                        "annotations": [],
+                        "linkedService": {
+                            "name": "Bronze_Airbnb",
+                            "properties": {
+                                "annotations": [],
+                                "type": "Lakehouse",
+                                "typeProperties": {
+                                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a",
+                                    "artifactId": "11d90541-29d0-47d6-ac9b-3b44fa2f2281",
+                                    "rootFolder": "Tables"
+                                }
+                            }
+                        },
+                        "type": "LakehouseTable",
+                        "schema": [],
+                        "typeProperties": {
+                            "table": "metadata_insideairbnb"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "Filter Metadata",
+                "type": "Filter",
+                "dependsOn": [
+                    {
+                        "activity": "Lookup Metadata",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('Lookup Metadata').output.value",
+                        "type": "Expression"
+                    },
+                    "condition": {
+                        "value": "@equals(item().City, 'London')",
+                        "type": "Expression"
+                    }
+                }
+            },
+            {
+                "name": "ForEach File",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "Filter Metadata",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('Filter Metadata').output.value",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "Switch File Type",
+                            "type": "Switch",
+                            "dependsOn": [],
+                            "typeProperties": {
+                                "on": {
+                                    "value": "@item().FileExtension",
+                                    "type": "Expression"
+                                },
+                                "cases": [
+                                    {
+                                        "value": "csv",
+                                        "activities": [
+                                            {
+                                                "name": "Ingest CSV File",
+                                                "type": "Copy",
+                                                "dependsOn": [],
+                                                "policy": {
+                                                    "timeout": "0.12:00:00",
+                                                    "retry": 0,
+                                                    "retryIntervalInSeconds": 30,
+                                                    "secureOutput": false,
+                                                    "secureInput": false
+                                                },
+                                                "typeProperties": {
+                                                    "source": {
+                                                        "type": "DelimitedTextSource",
+                                                        "storeSettings": {
+                                                            "type": "HttpReadSettings",
+                                                            "requestMethod": "GET"
+                                                        },
+                                                        "formatSettings": {
+                                                            "type": "DelimitedTextReadSettings"
+                                                        },
+                                                        "datasetSettings": {
+                                                            "annotations": [],
+                                                            "type": "DelimitedText",
+                                                            "typeProperties": {
+                                                                "location": {
+                                                                    "type": "HttpServerLocation",
+                                                                    "relativeUrl": {
+                                                                        "value": "@item().RelativeURL",
+                                                                        "type": "Expression"
+                                                                    }
+                                                                },
+                                                                "columnDelimiter": ",",
+                                                                "rowDelimiter": "\n",
+                                                                "escapeChar": "\"",
+                                                                "firstRowAsHeader": true,
+                                                                "quoteChar": "\""
+                                                            },
+                                                            "schema": [],
+                                                            "externalReferences": {
+                                                                "connection": "a48ca01e-d7de-412a-9a5c-0bfa33ac8e41"
+                                                            }
+                                                        }
+                                                    },
+                                                    "sink": {
+                                                        "type": "ParquetSink",
+                                                        "storeSettings": {
+                                                            "type": "LakehouseWriteSettings"
+                                                        },
+                                                        "formatSettings": {
+                                                            "type": "ParquetWriteSettings",
+                                                            "enableVertiParquet": true
+                                                        },
+                                                        "datasetSettings": {
+                                                            "annotations": [],
+                                                            "linkedService": {
+                                                                "name": "Bronze_Airbnb",
+                                                                "properties": {
+                                                                    "annotations": [],
+                                                                    "type": "Lakehouse",
+                                                                    "typeProperties": {
+                                                                        "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a",
+                                                                        "artifactId": "11d90541-29d0-47d6-ac9b-3b44fa2f2281",
+                                                                        "rootFolder": "Files"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "type": "Parquet",
+                                                            "typeProperties": {
+                                                                "location": {
+                                                                    "type": "LakehouseLocation",
+                                                                    "fileName": {
+                                                                        "value": "@{item().DestinationFileName}.parquet",
+                                                                        "type": "Expression"
+                                                                    },
+                                                                    "folderPath": {
+                                                                        "value": "@{item().System}/@{item().DestinationFolder}/@{formatDateTime(item().Date, 'yyyy')}/@{formatDateTime(item().Date, 'MM')}/@{formatDateTime(item().Date, 'dd')}",
+                                                                        "type": "Expression"
+                                                                    }
+                                                                },
+                                                                "compressionCodec": "snappy"
+                                                            },
+                                                            "schema": []
+                                                        }
+                                                    },
+                                                    "enableStaging": false,
+                                                    "enableSkipIncompatibleRow": true,
+                                                    "translator": {
+                                                        "type": "TabularTranslator",
+                                                        "typeConversion": true,
+                                                        "typeConversionSettings": {
+                                                            "allowDataTruncation": false,
+                                                            "treatBooleanAsNumber": false
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "name": "Load CSV to Delta Table",
+                                                "type": "Copy",
+                                                "dependsOn": [
+                                                    {
+                                                        "activity": "Ingest CSV File",
+                                                        "dependencyConditions": [
+                                                            "Succeeded"
+                                                        ]
+                                                    }
+                                                ],
+                                                "policy": {
+                                                    "timeout": "0.12:00:00",
+                                                    "retry": 0,
+                                                    "retryIntervalInSeconds": 30,
+                                                    "secureOutput": false,
+                                                    "secureInput": false
+                                                },
+                                                "typeProperties": {
+                                                    "source": {
+                                                        "type": "ParquetSource",
+                                                        "storeSettings": {
+                                                            "type": "LakehouseReadSettings",
+                                                            "recursive": false,
+                                                            "enablePartitionDiscovery": false
+                                                        },
+                                                        "formatSettings": {
+                                                            "type": "ParquetReadSettings"
+                                                        },
+                                                        "datasetSettings": {
+                                                            "annotations": [],
+                                                            "linkedService": {
+                                                                "name": "Bronze_Airbnb",
+                                                                "properties": {
+                                                                    "annotations": [],
+                                                                    "type": "Lakehouse",
+                                                                    "typeProperties": {
+                                                                        "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a",
+                                                                        "artifactId": "11d90541-29d0-47d6-ac9b-3b44fa2f2281",
+                                                                        "rootFolder": "Files"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "type": "Parquet",
+                                                            "typeProperties": {
+                                                                "location": {
+                                                                    "type": "LakehouseLocation",
+                                                                    "fileName": {
+                                                                        "value": "@{item().DestinationFileName}.parquet",
+                                                                        "type": "Expression"
+                                                                    },
+                                                                    "folderPath": {
+                                                                        "value": "@{item().System}/@{item().DestinationFolder}/@{formatDateTime(item().Date, 'yyyy')}/@{formatDateTime(item().Date, 'MM')}/@{formatDateTime(item().Date, 'dd')}",
+                                                                        "type": "Expression"
+                                                                    }
+                                                                },
+                                                                "compressionCodec": "snappy"
+                                                            },
+                                                            "schema": []
+                                                        }
+                                                    },
+                                                    "sink": {
+                                                        "type": "LakehouseTableSink",
+                                                        "tableActionOption": "Overwrite",
+                                                        "partitionOption": "None",
+                                                        "datasetSettings": {
+                                                            "annotations": [],
+                                                            "linkedService": {
+                                                                "name": "Bronze_Airbnb",
+                                                                "properties": {
+                                                                    "annotations": [],
+                                                                    "type": "Lakehouse",
+                                                                    "typeProperties": {
+                                                                        "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a",
+                                                                        "artifactId": "11d90541-29d0-47d6-ac9b-3b44fa2f2281",
+                                                                        "rootFolder": "Tables"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "type": "LakehouseTable",
+                                                            "schema": [],
+                                                            "typeProperties": {
+                                                                "table": {
+                                                                    "value": "@{item().DestinationFileName}",
+                                                                    "type": "Expression"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "enableStaging": false,
+                                                    "translator": {
+                                                        "type": "TabularTranslator",
+                                                        "typeConversion": true,
+                                                        "typeConversionSettings": {
+                                                            "allowDataTruncation": false,
+                                                            "treatBooleanAsNumber": false
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "value": "csv.gz",
+                                        "activities": [
+                                            {
+                                                "name": "Ingest CSV GZ File",
+                                                "type": "Copy",
+                                                "dependsOn": [],
+                                                "policy": {
+                                                    "timeout": "0.12:00:00",
+                                                    "retry": 0,
+                                                    "retryIntervalInSeconds": 30,
+                                                    "secureOutput": false,
+                                                    "secureInput": false
+                                                },
+                                                "typeProperties": {
+                                                    "source": {
+                                                        "type": "DelimitedTextSource",
+                                                        "storeSettings": {
+                                                            "type": "HttpReadSettings",
+                                                            "requestMethod": "GET"
+                                                        },
+                                                        "formatSettings": {
+                                                            "type": "DelimitedTextReadSettings"
+                                                        },
+                                                        "datasetSettings": {
+                                                            "annotations": [],
+                                                            "type": "DelimitedText",
+                                                            "typeProperties": {
+                                                                "location": {
+                                                                    "type": "HttpServerLocation",
+                                                                    "relativeUrl": {
+                                                                        "value": "@item().RelativeURL",
+                                                                        "type": "Expression"
+                                                                    }
+                                                                },
+                                                                "columnDelimiter": ",",
+                                                                "rowDelimiter": "\n",
+                                                                "compressionCodec": "gzip",
+                                                                "compressionLevel": "Optimal",
+                                                                "escapeChar": "\"",
+                                                                "firstRowAsHeader": true,
+                                                                "quoteChar": "\""
+                                                            },
+                                                            "schema": [],
+                                                            "externalReferences": {
+                                                                "connection": "a48ca01e-d7de-412a-9a5c-0bfa33ac8e41"
+                                                            }
+                                                        }
+                                                    },
+                                                    "sink": {
+                                                        "type": "ParquetSink",
+                                                        "storeSettings": {
+                                                            "type": "LakehouseWriteSettings"
+                                                        },
+                                                        "formatSettings": {
+                                                            "type": "ParquetWriteSettings",
+                                                            "enableVertiParquet": true
+                                                        },
+                                                        "datasetSettings": {
+                                                            "annotations": [],
+                                                            "linkedService": {
+                                                                "name": "Bronze_Airbnb",
+                                                                "properties": {
+                                                                    "annotations": [],
+                                                                    "type": "Lakehouse",
+                                                                    "typeProperties": {
+                                                                        "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a",
+                                                                        "artifactId": "11d90541-29d0-47d6-ac9b-3b44fa2f2281",
+                                                                        "rootFolder": "Files"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "type": "Parquet",
+                                                            "typeProperties": {
+                                                                "location": {
+                                                                    "type": "LakehouseLocation",
+                                                                    "fileName": {
+                                                                        "value": "@{item().DestinationFileName}.parquet",
+                                                                        "type": "Expression"
+                                                                    },
+                                                                    "folderPath": {
+                                                                        "value": "@{item().System}/@{item().DestinationFolder}/@{formatDateTime(item().Date, 'yyyy')}/@{formatDateTime(item().Date, 'MM')}/@{formatDateTime(item().Date, 'dd')}",
+                                                                        "type": "Expression"
+                                                                    }
+                                                                },
+                                                                "compressionCodec": "snappy"
+                                                            },
+                                                            "schema": []
+                                                        }
+                                                    },
+                                                    "enableStaging": false,
+                                                    "enableSkipIncompatibleRow": true,
+                                                    "translator": {
+                                                        "type": "TabularTranslator",
+                                                        "typeConversion": true,
+                                                        "typeConversionSettings": {
+                                                            "allowDataTruncation": false,
+                                                            "treatBooleanAsNumber": false
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "name": "Load CSV GZ to Delta Table",
+                                                "type": "Copy",
+                                                "dependsOn": [
+                                                    {
+                                                        "activity": "Ingest CSV GZ File",
+                                                        "dependencyConditions": [
+                                                            "Succeeded"
+                                                        ]
+                                                    }
+                                                ],
+                                                "policy": {
+                                                    "timeout": "0.12:00:00",
+                                                    "retry": 0,
+                                                    "retryIntervalInSeconds": 30,
+                                                    "secureOutput": false,
+                                                    "secureInput": false
+                                                },
+                                                "typeProperties": {
+                                                    "source": {
+                                                        "type": "ParquetSource",
+                                                        "storeSettings": {
+                                                            "type": "LakehouseReadSettings",
+                                                            "recursive": false,
+                                                            "enablePartitionDiscovery": false
+                                                        },
+                                                        "formatSettings": {
+                                                            "type": "ParquetReadSettings"
+                                                        },
+                                                        "datasetSettings": {
+                                                            "annotations": [],
+                                                            "linkedService": {
+                                                                "name": "Bronze_Airbnb",
+                                                                "properties": {
+                                                                    "annotations": [],
+                                                                    "type": "Lakehouse",
+                                                                    "typeProperties": {
+                                                                        "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a",
+                                                                        "artifactId": "11d90541-29d0-47d6-ac9b-3b44fa2f2281",
+                                                                        "rootFolder": "Files"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "type": "Parquet",
+                                                            "typeProperties": {
+                                                                "location": {
+                                                                    "type": "LakehouseLocation",
+                                                                    "fileName": {
+                                                                        "value": "@{item().DestinationFileName}.parquet",
+                                                                        "type": "Expression"
+                                                                    },
+                                                                    "folderPath": {
+                                                                        "value": "@{item().System}/@{item().DestinationFolder}/@{formatDateTime(item().Date, 'yyyy')}/@{formatDateTime(item().Date, 'MM')}/@{formatDateTime(item().Date, 'dd')}",
+                                                                        "type": "Expression"
+                                                                    }
+                                                                },
+                                                                "compressionCodec": "snappy"
+                                                            },
+                                                            "schema": []
+                                                        }
+                                                    },
+                                                    "sink": {
+                                                        "type": "LakehouseTableSink",
+                                                        "tableActionOption": "Overwrite",
+                                                        "partitionOption": "None",
+                                                        "datasetSettings": {
+                                                            "annotations": [],
+                                                            "linkedService": {
+                                                                "name": "Bronze_Airbnb",
+                                                                "properties": {
+                                                                    "annotations": [],
+                                                                    "type": "Lakehouse",
+                                                                    "typeProperties": {
+                                                                        "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a",
+                                                                        "artifactId": "11d90541-29d0-47d6-ac9b-3b44fa2f2281",
+                                                                        "rootFolder": "Tables"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "type": "LakehouseTable",
+                                                            "schema": [],
+                                                            "typeProperties": {
+                                                                "table": {
+                                                                    "value": "@{item().DestinationFileName}",
+                                                                    "type": "Expression"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "enableStaging": false,
+                                                    "translator": {
+                                                        "type": "TabularTranslator",
+                                                        "typeConversion": true,
+                                                        "typeConversionSettings": {
+                                                            "allowDataTruncation": false,
+                                                            "treatBooleanAsNumber": false
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "defaultActivities": [
+                                    {
+                                        "name": "Other File Type",
+                                        "type": "Wait",
+                                        "dependsOn": [],
+                                        "typeProperties": {
+                                            "waitTimeInSeconds": 1
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "annotations": [],
+        "lastModifiedByObjectId": "f6b3fe48-d23d-4612-adff-5d62f6281d47",
+        "lastPublishTime": "2024-03-17T19:21:33Z"
+    }
+}

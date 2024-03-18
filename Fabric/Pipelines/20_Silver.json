@@ -1,0 +1,120 @@
+{
+    "name": "20_Silver",
+    "objectId": "a39cf89f-98cb-40bc-baf0-0ff5abb7297e",
+    "properties": {
+        "description": "Clean, reshape and load data from Bronze lakehouse to Silver lakehouse.",
+        "activities": [
+            {
+                "name": "Host",
+                "type": "TridentNotebook",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "d116e9dc-e3eb-4876-82c2-c8904f51dcde",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            },
+            {
+                "name": "Listings",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Host",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "90e94e14-55dd-4368-9d54-b6c73984c6b2",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            },
+            {
+                "name": "Neighbourhood",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Listings",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "13a2aed6-9ca2-41a9-ad7c-7d677348e2fe",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            },
+            {
+                "name": "PropertyType",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Neighbourhood",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "4973e5e2-e59a-47f9-92b2-64f547a64309",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            },
+            {
+                "name": "RoomType",
+                "type": "TridentNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "PropertyType",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "typeProperties": {
+                    "notebookId": "caef6e3f-7b79-4140-877d-b292fd2b0a09",
+                    "workspaceId": "b83630b1-32bc-4102-87f0-ec38a52ae51a"
+                }
+            }
+        ],
+        "annotations": [],
+        "lastModifiedByObjectId": "f6b3fe48-d23d-4612-adff-5d62f6281d47",
+        "lastPublishTime": "2024-03-17T19:36:37Z"
+    }
+}
