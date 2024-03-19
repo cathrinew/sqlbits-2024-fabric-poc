@@ -10,15 +10,16 @@ Thank you so much for attending our **Build a Microsoft Fabric Proof of Concept 
 
 ## Slide Deck
 
-<div style="font-size: 2rem">
-
 👉 [Download the Slide Deck](<Slides/SQLBits - Fabric PoC - Marthe Emilie Cathrine.pptx>) 👈
-
-</div>
 
 
 ## Data sets
 http://insideairbnb.com/get-the-data/
+
+
+## Setting up the pipelines
+Go to the [Pipelines page](Pipelines.md)
+
 
 
 ## Session Description
