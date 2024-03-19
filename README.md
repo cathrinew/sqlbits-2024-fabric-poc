@@ -17,6 +17,9 @@ Thank you so much for attending our **Build a Microsoft Fabric Proof of Concept 
 </div>
 
 
+## Data sets
+http://insideairbnb.com/get-the-data/
+
 
 ## Session Description
 
